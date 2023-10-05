@@ -8,7 +8,7 @@ import { TargetUtils, Target } from "./TargetUtils.sol";
 
 struct TargetSet {
     // Storage of set values
-    Target[] _values;
+    Target[] _values; //uint256[] _values;
     // Position of the value in the `values` array, plus 1 because index 0
     // means a value is not in the set.
     // the key is not `Target` but the first 160 bits converted to address

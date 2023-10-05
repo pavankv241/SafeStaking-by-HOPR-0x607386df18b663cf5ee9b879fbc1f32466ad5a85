@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8;
+pragma solidity ^0.8.0;
 
 import { ECDSA } from "openzeppelin-contracts/utils/cryptography/ECDSA.sol";
 import { IAvatar } from "../interfaces/IAvatar.sol";
@@ -101,7 +101,7 @@ contract HoprNodeSafeRegistry is HoprNodeSafeRegistryEvents {
      * @dev Constructor function to initialize the contract state.
      * Computes the domain separator for EIP-712 verification.
      */
-    constructor() {
+    constructor() payable {
         // compute the domain separator on deployment
         updateDomainSeparator();
     }
@@ -271,14 +271,18 @@ contract HoprNodeSafeRegistry is HoprNodeSafeRegistryEvents {
         while (nextModule != SENTINEL_MODULES) {
             // get modules for safe
             (modules, nextModule) = IAvatar(safeAddress).getModulesPaginated(SENTINEL_MODULES, pageSize);
-            for (uint256 i = 0; i < modules.length; i++) {
-                if (
+            uint256 i = 0;
+            do{
+                 if (
                     IHoprNodeManagementModule(modules[i]).isHoprNodeManagementModule()
                         && IHoprNodeManagementModule(modules[i]).isNode(nodeChainKeyAddress)
                 ) {
                     return;
+
+
                 }
-            }
+
+            unchecked{++i;}}while(i < modules.length); //Gas
         }
 
         // if nodeChainKeyAddress is not a member of a valid HoprNodeManagementModule to the safe, revert

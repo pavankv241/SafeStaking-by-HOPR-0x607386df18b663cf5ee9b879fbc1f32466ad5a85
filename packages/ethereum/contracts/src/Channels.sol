@@ -234,7 +234,7 @@ contract HoprChannels is
      * @param _noticePeriodChannelClosure seconds until a channel can be closed
      * @param _safeRegistry address of the contract that maps from accounts to deployed Gnosis Safe instances
      */
-    constructor(address _token, Timestamp _noticePeriodChannelClosure, HoprNodeSafeRegistry _safeRegistry) {
+    constructor(address _token, Timestamp _noticePeriodChannelClosure, HoprNodeSafeRegistry _safeRegistry) payable {
         if (Timestamp.unwrap(_noticePeriodChannelClosure) == 0) {
             revert InvalidNoticePeriod();
         }
@@ -321,6 +321,7 @@ contract HoprChannels is
         HoprCrypto.VRFParameters calldata params
     )
         external
+        payable
         HoprMultiSig.noSafeSet()
     {
         _redeemTicketInternal(msg.sender, redeemable, params);
@@ -458,6 +459,7 @@ contract HoprChannels is
         address destination
     )
         external
+        payable
         HoprMultiSig.onlySafe(self)
     {
         _initiateOutgoingChannelClosureInternal(self, destination);
@@ -466,7 +468,7 @@ contract HoprChannels is
     /**
      * See `_initiateOutgoingChannelClosureInternal`
      */
-    function initiateOutgoingChannelClosure(address destination) external HoprMultiSig.noSafeSet() {
+    function initiateOutgoingChannelClosure(address destination) external payable HoprMultiSig.noSafeSet() {
         _initiateOutgoingChannelClosureInternal(msg.sender, destination);
     }
 
@@ -500,14 +502,14 @@ contract HoprChannels is
     /**
      * See `_closeIncomingChannelInternal`, entrypoint for MultiSig contract
      */
-    function closeIncomingChannelSafe(address self, address source) external HoprMultiSig.onlySafe(self) {
+    function closeIncomingChannelSafe(address self, address source) external payable HoprMultiSig.onlySafe(self) {
         _closeIncomingChannelInternal(self, source);
     }
 
     /**
      * See `_closeIncomingChannelInternal`
      */
-    function closeIncomingChannel(address source) external HoprMultiSig.noSafeSet() {
+    function closeIncomingChannel(address source) external payable HoprMultiSig.noSafeSet() {
         _closeIncomingChannelInternal(msg.sender, source);
     }
 
@@ -541,7 +543,7 @@ contract HoprChannels is
         indexEvent(abi.encodePacked(ChannelClosed.selector, channelId));
         emit ChannelClosed(channelId);
 
-        if (balance > 0) {
+        if (balance != 0) { //GAS
             if (token.transfer(source, balance) != true) {
                 revert TokenTransferFailed();
             }
@@ -556,6 +558,7 @@ contract HoprChannels is
         address destination
     )
         external
+        payable
         HoprMultiSig.onlySafe(self)
     {
         _finalizeOutgoingChannelClosureInternal(self, destination);
@@ -564,7 +567,7 @@ contract HoprChannels is
     /**
      * See `_finalizeOutgoingChannelClosureInternal`
      */
-    function finalizeOutgoingChannelClosure(address destination) external HoprMultiSig.noSafeSet() {
+    function finalizeOutgoingChannelClosure(address destination) external payable HoprMultiSig.noSafeSet() {
         _finalizeOutgoingChannelClosureInternal(msg.sender, destination);
     }
 
@@ -599,7 +602,7 @@ contract HoprChannels is
         indexEvent(abi.encodePacked(ChannelClosed.selector, channelId));
         emit ChannelClosed(channelId);
 
-        if (balance > 0) {
+        if (balance != 0) { //Gas
             if (token.transfer(msg.sender, balance) != true) {
                 revert TokenTransferFailed();
             }
@@ -698,11 +701,11 @@ contract HoprChannels is
             }
 
             // fund channel in direction of: account1 -> account2
-            if (Balance.unwrap(amount1) > 0) {
+            if (Balance.unwrap(amount1) != 0) {
                 _fundChannelInternal(account1, account2, amount1);
             }
             // fund channel in direction of: account2 -> account1
-            if (Balance.unwrap(amount2) > 0) {
+            if (Balance.unwrap(amount2) != 0) {
                 _fundChannelInternal(account2, account1, amount2);
             }
         } else {
@@ -718,7 +721,7 @@ contract HoprChannels is
      * @param account address of the destination
      * @param amount amount to fund for channel
      */
-    function fundChannelSafe(address self, address account, Balance amount) external HoprMultiSig.onlySafe(self) {
+    function fundChannelSafe(address self, address account, Balance amount) external payable HoprMultiSig.onlySafe(self) {
         _fundChannelInternal(self, account, amount);
 
         // pull tokens from Safe and handle result
@@ -733,7 +736,7 @@ contract HoprChannels is
      * @param account address of the destination
      * @param amount amount to fund for channel
      */
-    function fundChannel(address account, Balance amount) external HoprMultiSig.noSafeSet() {
+    function fundChannel(address account, Balance amount) external payable HoprMultiSig.noSafeSet() {
         _fundChannelInternal(msg.sender, account, amount);
 
         // pull tokens from funder and handle result

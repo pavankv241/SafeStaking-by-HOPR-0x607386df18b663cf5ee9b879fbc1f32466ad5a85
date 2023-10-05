@@ -44,7 +44,7 @@ abstract contract HoprAnnouncementsEvents {
  *
  */
 contract HoprAnnouncements is Multicall, HoprMultiSig, HoprAnnouncementsEvents {
-    constructor(HoprNodeSafeRegistry safeRegistry) {
+    constructor(HoprNodeSafeRegistry safeRegistry) payable {
         setNodeSafeRegistry(safeRegistry);
     }
 
@@ -55,6 +55,7 @@ contract HoprAnnouncements is Multicall, HoprMultiSig, HoprAnnouncementsEvents {
         bytes32 ed25519_pub_key
     )
         external
+        payable
         HoprMultiSig.onlySafe(self)
     {
         _bindKeysInternal(self, ed25519_sig_0, ed25519_sig_1, ed25519_pub_key);
@@ -66,6 +67,7 @@ contract HoprAnnouncements is Multicall, HoprMultiSig, HoprAnnouncementsEvents {
         bytes32 ed25519_pub_key
     )
         external
+        payable
         HoprMultiSig.noSafeSet()
     {
         _bindKeysInternal(msg.sender, ed25519_sig_0, ed25519_sig_1, ed25519_pub_key);
@@ -79,6 +81,7 @@ contract HoprAnnouncements is Multicall, HoprMultiSig, HoprAnnouncementsEvents {
         string calldata baseMultiaddr
     )
         external
+        payable
         HoprMultiSig.onlySafe(self)
     {
         _bindKeysInternal(self, ed25519_sig_0, ed25519_sig_1, ed25519_pub_key);
@@ -95,25 +98,26 @@ contract HoprAnnouncements is Multicall, HoprMultiSig, HoprAnnouncementsEvents {
         string calldata baseMultiaddr
     )
         external
+        payable
         HoprMultiSig.noSafeSet()
     {
         _bindKeysInternal(msg.sender, ed25519_sig_0, ed25519_sig_1, ed25519_pub_key);
         _announceInternal(msg.sender, baseMultiaddr);
     }
 
-    function announceSafe(address self, string calldata baseMultiaddr) external HoprMultiSig.onlySafe(self) {
+    function announceSafe(address self, string calldata baseMultiaddr) external payable HoprMultiSig.onlySafe(self) {
         _announceInternal(self, baseMultiaddr);
     }
 
-    function announce(string calldata baseMultiaddr) external HoprMultiSig.noSafeSet() {
+    function announce(string calldata baseMultiaddr) external payable HoprMultiSig.noSafeSet() {
         _announceInternal(msg.sender, baseMultiaddr);
     }
 
-    function revokeSafe(address self) external HoprMultiSig.onlySafe(self) {
+    function revokeSafe(address self) external payable HoprMultiSig.onlySafe(self) {
         _revokeInternal(self);
     }
 
-    function revoke() external HoprMultiSig.noSafeSet() {
+    function revoke() external payable HoprMultiSig.noSafeSet() {
         _revokeInternal(msg.sender);
     }
 
@@ -151,7 +155,7 @@ contract HoprAnnouncements is Multicall, HoprMultiSig, HoprAnnouncementsEvents {
      *
      * @param baseMultiaddr base multiaddress of the node
      */
-    function _announceInternal(address self, string calldata baseMultiaddr) internal {
+    function _announceInternal(address self, string calldata baseMultiaddr)  internal {
         emit AddressAnnouncement(self, baseMultiaddr);
     }
 

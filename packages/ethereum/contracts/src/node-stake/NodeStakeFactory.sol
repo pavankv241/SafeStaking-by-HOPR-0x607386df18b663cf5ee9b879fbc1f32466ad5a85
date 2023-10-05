@@ -55,7 +55,7 @@ contract HoprNodeStakeFactory is HoprNodeStakeFactoryEvents {
      * @dev Constructor function to initialize contract state.
      * Initializes the encoded address of the contract's approver and the approved hash signature.
      */
-    constructor() {
+    constructor() payable {
         // Encode the contract's address to be used in EIP-1271 signature verification
         r = bytes32(uint256(uint160(address(this))));
 

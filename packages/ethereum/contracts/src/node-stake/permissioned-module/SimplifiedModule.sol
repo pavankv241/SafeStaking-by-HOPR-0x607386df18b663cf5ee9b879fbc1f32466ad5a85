@@ -76,5 +76,5 @@ abstract contract SimplifiedModule is UUPSUpgradeable, OwnableUpgradeable, Simpl
     /**
      * @dev Override {_authorizeUpgrade} to only allow owner to upgrade the contract
      */
-    function _authorizeUpgrade(address) internal override(UUPSUpgradeable) onlyOwner { }
+    function _authorizeUpgrade(address) internal override(UUPSUpgradeable)  onlyOwner { }
 }

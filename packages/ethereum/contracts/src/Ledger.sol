@@ -50,7 +50,7 @@ abstract contract HoprLedger is HoprLedgerEvents {
     /**
      * @param _snapshotInterval time in miliseconds to create a new snapshot
      */
-    constructor(uint256 _snapshotInterval) {
+    constructor(uint256 _snapshotInterval) payable {
         snapshotInterval = _snapshotInterval;
 
         // take first 28 bytes
@@ -86,7 +86,7 @@ abstract contract HoprLedger is HoprLedgerEvents {
     }
 
     function indexEvent(bytes memory payload) internal {
-        bool createSnapshot = false;
+        bool createSnapshot; //Gas
         if (block.timestamp > latestRoot.timestamp + snapshotInterval) {
             createSnapshot = true;
         }

@@ -331,7 +331,7 @@ library HoprCapabilityPermissions {
         }
 
         // send native tokens is only available to a set of addresses
-        if (value > 0 && !target.isTargetType(TargetType.SEND)) {
+        if (value != 0 && !target.isTargetType(TargetType.SEND)) {
             revert SendNotAllowed();
         }
     }
@@ -495,7 +495,7 @@ library HoprCapabilityPermissions {
         } else {
             revert TargetIsNotScoped();
         }
-    }
+    } 
 
     /**
      * @dev Allows the target address to be scoped as a HoprToken (TOKEN)
@@ -506,7 +506,7 @@ library HoprCapabilityPermissions {
     function scopeTargetToken(Role storage role, Target target) internal {
         address targetAddress = target.getTargetAddress();
         if (targetAddress == address(0)) {
-            revert AddressIsZero();
+            revert AddressIsZero(); 
         }
         // check targetAddress is not scoped
         if (role.targets.contains(targetAddress)) {
@@ -555,13 +555,13 @@ library HoprCapabilityPermissions {
             revert AddressIsZero();
         }
         // check targetAddress is not scoped
-        if (role.targets.contains(targetAddress)) {
+        if (role.targets.contains(targetAddress)) { //If true revert
             revert TargetIsScoped();
         }
 
         // force overwrite irrelevant defaults
         Target updatedTarget = target.forceWriteAsTargetType(TargetType.SEND);
-        role.targets.add(updatedTarget);
+        role.targets.add(updatedTarget); //If false return false
 
         emit ScopedTargetSend(targetAddress, updatedTarget);
     }
@@ -584,14 +584,17 @@ library HoprCapabilityPermissions {
         (bytes4[] memory functionSigs, GranularPermission[] memory permissions) =
             HoprCapabilityPermissions.decodeFunctionSigsAndPermissions(encodedSigsPermissions, 7);
 
-        for (uint256 i = 0; i < 7; i++) {
+         uint256 i;
+         do{
             if (functionSigs[i] != bytes4(0)) {
                 bytes32 capabilityKey = keyForFunctions(targetAddress, functionSigs[i]);
                 role.capabilities[capabilityKey][channelId] = permissions[i];
 
                 emit ScopedGranularChannelCapability(targetAddress, channelId, functionSigs[i], permissions[i]);
             }
-        }
+             unchecked {++i;}
+         }while(i < 7);
+
     }
 
     /**
@@ -615,16 +618,20 @@ library HoprCapabilityPermissions {
         (bytes4[] memory functionSigs, GranularPermission[] memory permissions) =
             HoprCapabilityPermissions.decodeFunctionSigsAndPermissions(encodedSigsPermissions, 2);
 
-        for (uint256 i = 0; i < 2; i++) {
-            if (functionSigs[i] != bytes4(0)) {
+            uint256 i ;
+            do{
+                if (functionSigs[i] != bytes4(0)) {
                 bytes32 capabilityKey = keyForFunctions(targetAddress, functionSigs[i]);
                 role.capabilities[capabilityKey][getChannelId(nodeAddress, targetAddress)] = permissions[i];
 
                 emit ScopedGranularTokenCapability(
                     nodeAddress, targetAddress, beneficiary, functionSigs[i], permissions[i]
                 );
-            }
-        }
+                }
+                ++i;
+            }while(i < 2);//Gas
+
+        
     }
 
     /**
@@ -661,19 +668,19 @@ library HoprCapabilityPermissions {
      * @param index The index of the static address value to retrieve.
      * @return addr The static address value at the specified index.
      */
-    function pluckOneStaticAddress(uint256 index, bytes memory data) internal pure returns (address) {
+    function pluckOneStaticAddress(uint256 index, bytes memory data) internal pure returns (address addr) {//GAs
         // pre-check: is there a word available for the current parameter at argumentsBlock?
         if (data.length < 4 + index * 32 + 32) {
             revert CalldataOutOfBounds();
         }
 
         uint256 offset = 4 + index * 32;
-        address addr;
+        //Gas
         assembly {
             // add 32 - jump over the length encoding of the data bytes array
             addr := mload(add(32, add(data, offset)))
         }
-        return addr;
+        
     }
 
     /**
@@ -682,19 +689,19 @@ library HoprCapabilityPermissions {
      * @param index The index of the static bytes32 value to retrieve.
      * @return by32 The second bytes32 extracted from the `data` byte array.
      */
-    function pluckOneBytes32(uint256 index, bytes memory data) internal pure returns (bytes32) {
+    function pluckOneBytes32(uint256 index, bytes memory data) internal pure returns (bytes32  by32) {//GAs
         // pre-check: is there a word available for the current parameter at argumentsBlock?
         if (data.length < 4 + index * 32 + 32) {
             revert CalldataOutOfBounds();
         }
 
         uint256 offset = 4 + index * 32;
-        bytes32 by32;
+        //GAs
         assembly {
             // add 32 - jump over the length encoding of the data bytes array
             by32 := mload(add(32, add(data, offset)))
         }
-        return by32;
+    
     }
 
     /**
@@ -734,16 +741,21 @@ library HoprCapabilityPermissions {
         }
 
         bytes32 val;
-        // add function signatures
-        for (uint256 i = 0; i < len; i++) {
+
+         // add function signatures
+        for (uint256 i = 0; i < len; ) {
             // first right shift (32 - 4) * 8 = 224 bits
             // then left shift (32 - 4 * i - 4) * 8 = (224 - 32 * i) bits
             val |= (bytes32(functionSigs[i]) >> 224) << (224 - (32 * i));
+             unchecked {++i;}
         }
-        for (uint256 i = 0; i < len; i++) {
+        
+        for (uint256 i = 0; i < len;) {
             // shift by two bits
             val |= bytes32(uint256(permissions[i])) << (2 * i);
+             unchecked {++i;}
         }
+
         return (val, len);
     }
 
@@ -768,17 +780,20 @@ library HoprCapabilityPermissions {
         }
         functionSigs = new bytes4[](length);
         permissions = new GranularPermission[](length);
-        // decode function signature
-        for (uint256 i = 0; i < length; i++) {
+        //Use do-while loop
+        for (uint256 i = 0; i < length;) {
             // first right shift (32 - 4 * i - 4) * 8 = (224 - 32 * i) bits
             // then left shift (32 - 4) * 8 = 224 bits
             functionSigs[i] = bytes4((encoded >> (224 - (32 * i))) << 224);
+            unchecked {++i;}
         }
         // decode permissions
-        for (uint256 j = 0; j < length; j++) {
+        for (uint256 j = 0; j < length;) {
             // first left shift 256 - 2 - 2 * j = 254 - 2 * j bits
             // then right shift 256 - 2 = 254 bits
             permissions[j] = GranularPermission(uint8((uint256(encoded) << (254 - (2 * j))) >> 254));
+            unchecked {++j;}
+
         }
     }
 }
