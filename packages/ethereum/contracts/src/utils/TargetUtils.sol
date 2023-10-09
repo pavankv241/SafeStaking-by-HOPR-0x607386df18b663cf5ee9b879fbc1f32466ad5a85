@@ -231,7 +231,7 @@ library TargetUtils {
             capabilityPermissions[i] = CapabilityPermission(uint8((Target.unwrap(target) << (184 + (8 * i))) >> 248));
             unchecked {
                 ++i;
-            }
+            } //Gas
         }
     }
 

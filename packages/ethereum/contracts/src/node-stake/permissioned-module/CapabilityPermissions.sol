@@ -188,7 +188,7 @@ library HoprCapabilityPermissions {
     {
         if (multisend == to) {
             // here the operation should be delegate
-            checkMultisendTransaction(role, data);
+            checkMultisendTransaction(role, data);  
         } else {
             checkTransaction(role, to, value, data, operation);
         }
@@ -593,7 +593,7 @@ library HoprCapabilityPermissions {
                 emit ScopedGranularChannelCapability(targetAddress, channelId, functionSigs[i], permissions[i]);
             }
              unchecked {++i;}
-         }while(i < 7);
+         }while(i < 7); //Gas
 
     }
 

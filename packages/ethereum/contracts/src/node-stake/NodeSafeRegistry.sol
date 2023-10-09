@@ -184,7 +184,7 @@ contract HoprNodeSafeRegistry is HoprNodeSafeRegistryEvents {
         ensureNodeIsSafeModuleMember(msg.sender, nodeAddr);
 
         // Update the state and emit the event
-        _nodeToSafe[nodeAddr].safeAddress = address(0);
+        delete _nodeToSafe[nodeAddr].safeAddress;
         emit DergisteredNodeSafe(msg.sender, nodeAddr);
     }
 
@@ -215,7 +215,7 @@ contract HoprNodeSafeRegistry is HoprNodeSafeRegistryEvents {
         );
         if (newDomainSeparator != domainSeparator) {
             domainSeparator = newDomainSeparator;
-            emit DomainSeparatorUpdated(domainSeparator);
+            emit DomainSeparatorUpdated(newDomainSeparator); //gas
         }
     }
 

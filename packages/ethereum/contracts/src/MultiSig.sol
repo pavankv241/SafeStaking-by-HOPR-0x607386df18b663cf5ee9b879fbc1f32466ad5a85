@@ -27,7 +27,7 @@ abstract contract HoprMultiSig {
     error InvalidSafeAddress();
 
     HoprNodeSafeRegistry registry;
-    bool initialized ;
+    bool initialized ; //Gas
 
     /**
      * Sets address of NodeSafeRegistry contract.

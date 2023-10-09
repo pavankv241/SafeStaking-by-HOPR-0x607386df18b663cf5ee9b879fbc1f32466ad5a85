@@ -81,7 +81,7 @@ abstract contract HoprLedger is HoprLedgerEvents {
         );
         if (newLedgerDomainSeparator != ledgerDomainSeparator) {
             ledgerDomainSeparator = newLedgerDomainSeparator;
-            emit LedgerDomainSeparatorUpdated(ledgerDomainSeparator);
+            emit LedgerDomainSeparatorUpdated(newLedgerDomainSeparator); //Gas
         }
     }
 

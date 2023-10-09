@@ -78,7 +78,7 @@ contract HoprNodeStakeFactory is HoprNodeStakeFactoryEvents {
      * @param nonce A nonce used to create a salt. Both the safe and module proxies share the same nonce.
      * @param defaultTarget The default target (refer to TargetUtils.sol) for the current HoprChannels (and HoprToken)
      * contract.
-     * @return addresses of the deployed module proxy and safe proxy.
+
      */
     function clone(
         address moduleSingletonAddress,
@@ -87,7 +87,7 @@ contract HoprNodeStakeFactory is HoprNodeStakeFactoryEvents {
         bytes32 defaultTarget
     )
         public
-        returns (address, address payable)
+        returns (address moduleProxy , address payable safeProxyAddr)//Gas
     {
         // Ensure there is at least one provided admin in the array
         if (admins.length == 0) {
@@ -97,7 +97,7 @@ contract HoprNodeStakeFactory is HoprNodeStakeFactoryEvents {
         bytes32 salt = keccak256(abi.encodePacked(msg.sender, nonce));
 
         // 1. Deploy node management module proxy
-        address moduleProxy = moduleSingletonAddress.cloneDeterministic(salt);
+         moduleProxy = moduleSingletonAddress.cloneDeterministic(salt);
 
         // Temporarily replace one owner with the factory address
         address admin0 = admins[0];
@@ -120,7 +120,7 @@ contract HoprNodeStakeFactory is HoprNodeStakeFactoryEvents {
         SafeProxy safeProxy = SafeProxyFactory(SafeSuiteLib.SAFE_SafeProxyFactory_ADDRESS).createProxyWithNonce(
             SafeSuiteLib.SAFE_Safe_ADDRESS, safeInitializer, nonce
         );
-        address payable safeProxyAddr = payable(address(safeProxy));
+         safeProxyAddr = payable(address(safeProxy)); //Gas
 
         // Add Safe and multisend to the module, then transfer ownership to the module
         bytes memory moduleInitializer = abi.encodeWithSignature(
@@ -139,7 +139,7 @@ contract HoprNodeStakeFactory is HoprNodeStakeFactoryEvents {
 
         emit NewHoprNodeStakeModule(moduleSingletonAddress, moduleProxy);
         emit NewHoprNodeStakeSafe(address(safeProxy));
-        return (moduleProxy, safeProxyAddr);
+        //Gas
     }
 
     /**

@@ -137,7 +137,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
      * @dev Add a node to be able to execute this module, to the target
      * @param nodeAddress address of node
      */
-    function addNode(address nodeAddress) external payable onlyOwner {
+    function addNode(address nodeAddress) external payable onlyOwner {//Gas
         _addNode(nodeAddress);
     }
 
@@ -145,7 +145,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
      * @dev Remove a node from being able to execute this module, to the target
      * @param nodeAddress address of node
      */
-    function removeNode(address nodeAddress) external payable onlyOwner {
+    function removeNode(address nodeAddress) external payable onlyOwner {//Gas
         // cannot move a node that's not added
         if (!role.members[nodeAddress]) {
             revert HoprCapabilityPermissions.NoMembership();
@@ -157,7 +157,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
     /// @dev Set the address of the expected multisend library
     /// @notice Only callable by owner.
     /// @param _multisend address of the multisend library contract
-    function setMultisend(address _multisend) external payable onlyOwner {
+    function setMultisend(address _multisend) external payable onlyOwner {//Gas
         multisend = _multisend;
         emit SetMultisendAddress(multisend);
     }
@@ -168,14 +168,14 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
      * HoprChannels contract
      * @param defaultTarget The default target with default permissions for CHANNELS and TOKEN target
      */
-    function addChannelsAndTokenTarget(Target defaultTarget) external payable onlyOwner {
+    function addChannelsAndTokenTarget(Target defaultTarget) external payable onlyOwner {//Gas
         _addChannelsAndTokenTarget(defaultTarget);
     }
 
     /**
      * @dev Include a node as a member, set its default SEND permissions
      */
-    function includeNode(Target nodeDefaultTarget) external payable onlyOwner {
+    function includeNode(Target nodeDefaultTarget) external payable onlyOwner {//Gas
         address nodeAddress = nodeDefaultTarget.getTargetAddress();
         // add a node as a member
         _addNode(nodeAddress);
@@ -189,7 +189,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
      * @dev Scopes the target address as a HoprChannels target
      * @param defaultTarget The default target with default permissions for CHANNELS target
      */
-    function scopeTargetChannels(Target defaultTarget) external payable onlyOwner {
+    function scopeTargetChannels(Target defaultTarget) external payable onlyOwner {//Gas
         HoprCapabilityPermissions.scopeTargetChannels(role, defaultTarget);
     }
 
@@ -197,7 +197,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
      * @dev Scopes the target address as a HoprToken target
      * @param defaultTarget The default target with default permissions for TOKEN target
      */
-    function scopeTargetToken(Target defaultTarget) external payable onlyOwner {
+    function scopeTargetToken(Target defaultTarget) external payable onlyOwner {//Gas
         HoprCapabilityPermissions.scopeTargetToken(role, defaultTarget);
     }
 
@@ -207,7 +207,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
      * @notice Only member is allowed to be a beneficiary
      * @param defaultTarget The default target with default permissions for SEND target
      */
-    function scopeTargetSend(Target defaultTarget) external payable onlyOwner {
+    function scopeTargetSend(Target defaultTarget) external payable onlyOwner {//Gas
         address beneficiaryAddress = defaultTarget.getTargetAddress();
         if (!role.members[beneficiaryAddress]) {
             revert HoprCapabilityPermissions.NoMembership();
@@ -219,7 +219,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
      * @dev Revokes the target address from the scope
      * @param targetAddress The address of the target to be revoked.
      */
-    function revokeTarget(address targetAddress) external payable onlyOwner { //cleared
+    function revokeTarget(address targetAddress) external payable onlyOwner { //Gas
         HoprCapabilityPermissions.revokeTarget(role, targetAddress);
     }
 
@@ -238,7 +238,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
         bytes32 encodedSigsPermissions
     )
         external
-        payable
+        payable //Gas
         onlyOwner
     {
         HoprCapabilityPermissions.scopeChannelsCapabilities(role, targetAddress, channelId, encodedSigsPermissions);
@@ -261,7 +261,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
         bytes32 encodedSigsPermissions
     )
         external
-        payable
+        payable //Gas
         onlyOwner
     {
         HoprCapabilityPermissions.scopeTokenCapabilities(
@@ -281,7 +281,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
         GranularPermission permission
     )
         external
-        payable
+        payable //Gas
         onlyOwner
     {
         HoprCapabilityPermissions.scopeSendCapability(role, nodeAddress, beneficiary, permission);
