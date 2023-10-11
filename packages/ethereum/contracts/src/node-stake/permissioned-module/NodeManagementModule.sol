@@ -73,7 +73,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
         _disableInitializers();
     }
 
-    function initialize(bytes memory initParams) public initializer { //Front-run
+    function initialize(bytes memory initParams) public  initializer { //Change here
         (address _safe, address _multisend, bytes32 _defaultTokenChannelsTarget) =
             abi.decode(initParams, (address, address, bytes32));
 

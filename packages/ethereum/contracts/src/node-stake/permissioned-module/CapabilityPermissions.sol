@@ -583,11 +583,11 @@ library HoprCapabilityPermissions {
     {
         (bytes4[] memory functionSigs, GranularPermission[] memory permissions) =
             HoprCapabilityPermissions.decodeFunctionSigsAndPermissions(encodedSigsPermissions, 7);
-
+        bytes32 capabilityKey; //gas
          uint256 i;
          do{
             if (functionSigs[i] != bytes4(0)) {
-                bytes32 capabilityKey = keyForFunctions(targetAddress, functionSigs[i]);
+                capabilityKey = keyForFunctions(targetAddress, functionSigs[i]); //gas
                 role.capabilities[capabilityKey][channelId] = permissions[i];
 
                 emit ScopedGranularChannelCapability(targetAddress, channelId, functionSigs[i], permissions[i]);
@@ -617,18 +617,18 @@ library HoprCapabilityPermissions {
     {
         (bytes4[] memory functionSigs, GranularPermission[] memory permissions) =
             HoprCapabilityPermissions.decodeFunctionSigsAndPermissions(encodedSigsPermissions, 2);
-
+            bytes32 capabilityKey; //gas
             uint256 i ;
             do{
                 if (functionSigs[i] != bytes4(0)) {
-                bytes32 capabilityKey = keyForFunctions(targetAddress, functionSigs[i]);
+                capabilityKey = keyForFunctions(targetAddress, functionSigs[i]);
                 role.capabilities[capabilityKey][getChannelId(nodeAddress, targetAddress)] = permissions[i];
 
                 emit ScopedGranularTokenCapability(
                     nodeAddress, targetAddress, beneficiary, functionSigs[i], permissions[i]
                 );
-                }
-                ++i;
+                } 
+                unchecked {++i;}
             }while(i < 2);//Gas
 
         
