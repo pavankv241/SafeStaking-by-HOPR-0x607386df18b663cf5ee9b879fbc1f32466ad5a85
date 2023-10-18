@@ -26,7 +26,7 @@ abstract contract HoprLedgerEvents {
  * Indexes data trustlessly to allow a fast-sync for nodes in the network.
  */
 abstract contract HoprLedger is HoprLedgerEvents {
-    string public constant LEDGER_VERSION = "1.0.0";
+    bytes public constant LEDGER_VERSION = "1.0.0"; //Gas-savings
 
     uint256 immutable snapshotInterval;
 
@@ -74,7 +74,7 @@ abstract contract HoprLedger is HoprLedgerEvents {
             abi.encode(
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
                 keccak256(bytes("HoprLedger")),
-                keccak256(bytes(LEDGER_VERSION)),
+                keccak256(LEDGER_VERSION),
                 block.chainid,
                 address(this)
             )

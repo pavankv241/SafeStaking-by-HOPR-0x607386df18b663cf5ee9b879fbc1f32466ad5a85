@@ -73,6 +73,6 @@ contract HoprTicketPriceOracle is Ownable, HoprTicketPriceOracleEvents {
         uint256 oldTicketPrice = currentTicketPrice;
         currentTicketPrice = _newTicketPrice;
 
-        emit TicketPriceUpdated(oldTicketPrice, currentTicketPrice);
+        emit TicketPriceUpdated(oldTicketPrice, _newTicketPrice);
     }
 }

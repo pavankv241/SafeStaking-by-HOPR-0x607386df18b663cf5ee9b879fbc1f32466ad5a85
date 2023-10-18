@@ -359,7 +359,7 @@ contract HoprNodeManagementModule is SimplifiedModule, IHoprNodeManagementModule
         Enum.Operation operation
     )
         public
-        nodeOnly
+        nodeOnly 
         returns (bool, bytes memory)
     {
         HoprCapabilityPermissions.check(role, multisend, to, value, data, operation);

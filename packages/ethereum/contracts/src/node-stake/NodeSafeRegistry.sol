@@ -85,7 +85,7 @@ contract HoprNodeSafeRegistry is HoprNodeSafeRegistryEvents {
     }
 
     // Currently deployed version, starting with 1.0.0
-    string public constant VERSION = "1.0.0";
+    bytes public constant VERSION = "1.0.0"; //Gas-savings
 
     bytes32 public domainSeparator;
     mapping(address => NodeSafeRecord) _nodeToSafe;
@@ -132,11 +132,11 @@ contract HoprNodeSafeRegistry is HoprNodeSafeRegistryEvents {
      */
     function isNodeSafeRegistered(address safeAddress, address nodeChainKeyAddress) external view returns (bool) {
         // If node is not registered to any safe, return false
-        if (_nodeToSafe[nodeChainKeyAddress].safeAddress == address(0)) {
+       /* if (_nodeToSafe[nodeChainKeyAddress].safeAddress == address(0)) {
             return false;
-        }
+        }*/
 
-        return _nodeToSafe[nodeChainKeyAddress].safeAddress == safeAddress;
+        return _nodeToSafe[nodeChainKeyAddress].safeAddress == safeAddress ? true : false; //gas-savings
     }
 
     /**
@@ -208,7 +208,7 @@ contract HoprNodeSafeRegistry is HoprNodeSafeRegistryEvents {
             abi.encode(
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
                 keccak256(bytes("NodeSafeRegistry")),
-                keccak256(bytes(VERSION)),
+                keccak256(VERSION), //Gas-savings
                 block.chainid,
                 address(this)
             )

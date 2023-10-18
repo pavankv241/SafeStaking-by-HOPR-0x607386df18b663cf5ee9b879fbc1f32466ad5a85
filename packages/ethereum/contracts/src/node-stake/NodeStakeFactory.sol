@@ -46,7 +46,7 @@ contract HoprNodeStakeFactory is HoprNodeStakeFactoryEvents {
     bytes32 internal immutable r;
 
     // Signature of the approved hash used for EIP-1271 signature verification
-    bytes internal approvalHashSig;
+    bytes internal  approvalHashSig;
 
     // Error indicating that there are too few owners provided
     error TooFewOwners();

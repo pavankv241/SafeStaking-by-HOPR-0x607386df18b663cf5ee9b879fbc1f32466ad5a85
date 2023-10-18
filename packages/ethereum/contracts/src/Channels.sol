@@ -128,7 +128,7 @@ contract HoprChannels is
     // ERC-777 tokensReceived hook, fundChannel
     uint256 public immutable ERC777_HOOK_FUND_CHANNEL_SIZE = abi.encodePacked(address(0), address(0)).length;
 
-    string public constant VERSION = "2.0.0";
+    bytes public constant VERSION = "2.0.0"; //Gas-savings
 
     bytes32 public domainSeparator; // depends on chainId
 
@@ -287,7 +287,7 @@ contract HoprChannels is
             abi.encode(
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
                 keccak256(bytes("HoprChannels")),
-                keccak256(bytes(VERSION)),
+                keccak256(VERSION), //Gas-savings
                 block.chainid,
                 address(this)
             )
@@ -295,7 +295,7 @@ contract HoprChannels is
 
         if (newDomainSeparator != domainSeparator) {
             domainSeparator = newDomainSeparator;
-            emit DomainSeparatorUpdated(domainSeparator);
+            emit DomainSeparatorUpdated(newDomainSeparator); //Gas
         }
     }
 

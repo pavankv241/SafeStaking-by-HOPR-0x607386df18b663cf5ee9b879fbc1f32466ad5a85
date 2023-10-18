@@ -495,7 +495,7 @@ library HoprCapabilityPermissions {
         } else {
             revert TargetIsNotScoped();
         }
-    } 
+    }
 
     /**
      * @dev Allows the target address to be scoped as a HoprToken (TOKEN)
@@ -506,7 +506,7 @@ library HoprCapabilityPermissions {
     function scopeTargetToken(Role storage role, Target target) internal {
         address targetAddress = target.getTargetAddress();
         if (targetAddress == address(0)) {
-            revert AddressIsZero(); 
+            revert AddressIsZero();
         }
         // check targetAddress is not scoped
         if (role.targets.contains(targetAddress)) {
@@ -620,15 +620,15 @@ library HoprCapabilityPermissions {
             bytes32 capabilityKey; //gas
             uint256 i ;
             do{
-                if (functionSigs[i] != bytes4(0)) {
-                capabilityKey = keyForFunctions(targetAddress, functionSigs[i]);
-                role.capabilities[capabilityKey][getChannelId(nodeAddress, targetAddress)] = permissions[i];
+                 if (functionSigs[i] != bytes4(0)) {
+                 capabilityKey = keyForFunctions(targetAddress, functionSigs[i]);
+                 role.capabilities[capabilityKey][getChannelId(nodeAddress, targetAddress)] = permissions[i];
 
-                emit ScopedGranularTokenCapability(
+                 emit ScopedGranularTokenCapability(
                     nodeAddress, targetAddress, beneficiary, functionSigs[i], permissions[i]
-                );
-                } 
-                unchecked {++i;}
+                 );
+                 }
+                 unchecked {++i;}
             }while(i < 2);//Gas
 
         
@@ -680,7 +680,7 @@ library HoprCapabilityPermissions {
             // add 32 - jump over the length encoding of the data bytes array
             addr := mload(add(32, add(data, offset)))
         }
-        
+
     }
 
     /**
@@ -747,13 +747,13 @@ library HoprCapabilityPermissions {
             // first right shift (32 - 4) * 8 = 224 bits
             // then left shift (32 - 4 * i - 4) * 8 = (224 - 32 * i) bits
             val |= (bytes32(functionSigs[i]) >> 224) << (224 - (32 * i));
-             unchecked {++i;}
+             unchecked {++i;} //gas
         }
-        
+
         for (uint256 i = 0; i < len;) {
             // shift by two bits
             val |= bytes32(uint256(permissions[i])) << (2 * i);
-             unchecked {++i;}
+             unchecked {++i;} //Gas
         }
 
         return (val, len);
@@ -785,14 +785,14 @@ library HoprCapabilityPermissions {
             // first right shift (32 - 4 * i - 4) * 8 = (224 - 32 * i) bits
             // then left shift (32 - 4) * 8 = 224 bits
             functionSigs[i] = bytes4((encoded >> (224 - (32 * i))) << 224);
-            unchecked {++i;}
+            unchecked {++i;}//Gas
         }
         // decode permissions
         for (uint256 j = 0; j < length;) {
             // first left shift 256 - 2 - 2 * j = 254 - 2 * j bits
             // then right shift 256 - 2 = 254 bits
             permissions[j] = GranularPermission(uint8((uint256(encoded) << (254 - (2 * j))) >> 254));
-            unchecked {++j;}
+            unchecked {++j;} //gas
 
         }
     }

@@ -134,11 +134,13 @@ library EnumerableTargetSet {
      */
     function tryGet(TargetSet storage set, address targetAddress) internal view returns (bool, Target) {
         uint256 index = set._indexes[targetAddress];
-        if (index == 0) {
+        /*if (index == 0) {
             return (false, Target.wrap(0));
         } else {
             return (true, set._values[index - 1]);
-        }
+        }*/
+        return index == 0 ? (false, Target.wrap(0)) : (true, set._values[index - 1]); //Gas-savings
+
     }
 
     /**

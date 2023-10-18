@@ -162,7 +162,7 @@ abstract contract HoprCrypto {
      */
     function scalarPointMultiplication(uint256 scalar, uint256 pX, uint256 pY) internal pure returns (address) {
         uint8 sign;
-        if (pY % 2 == 0) {
+        if (pY & uint8(1) == 0) {//Gas-savings
             sign = 27;
         } else {
             sign = 28;
